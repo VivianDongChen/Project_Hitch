@@ -1,39 +1,54 @@
 # 黑马顺风车
 
-#### 介绍
-{**以下是 Gitee 平台说明，您可以替换此简介**
-Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用 Gitee 实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
+## 测试环境接口：
 
-#### 软件架构
-软件架构说明
+###  服务网关： 
 
+ http://116.62.213.90:10010
 
-#### 安装教程
+###  注册中心： 
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+ http://116.62.213.90:10011/nacos
 
-#### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+###  harbor
+ https://manager-hongbaoyu-java.itheima.net:8443/harbor/projects
+ 
 
 
-#### 特技
+###  行程中心-12： 
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+ http://116.62.213.90:10012/stroke/doc.html#/home
+
+###  存储中心-1： 
+
+ http://116.62.213.90:10013/storage/doc.html#/home
+
+###  支付中心-9： 
+
+ http://116.62.213.90:10014/payment/doc.html#/home
+
+###  订单中心-4： 
+
+ http://116.62.213.90:10015/order/doc.html#/home
+
+###  消息中心-1： 
+
+ http://116.62.213.90:10016/notice/doc.html#/home
+
+###  用户中心-12： 
+
+ http://116.62.213.90:10017/account/doc.html#/home
+
+## total:
+
+### 接口:
+
+39
+
+### 代码:
+
+顺风车
+added lines: 33070, removed lines: 10804, total lines: 22266
+
+total with opencv demo
+added lines: 478179, removed lines: 10814, total lines: 467365
