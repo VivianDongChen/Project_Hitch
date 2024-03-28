@@ -106,7 +106,10 @@
                 <rabbit.host>192.168.64.100</rabbit.host>
                 <rabbit.port>5672</rabbit.port>
                 <kafka.addr>192.168.64.100:9103</kafka.addr>
-                <fastdfs.addr>192.168.64.100:22122</fastdfs.addr>
+                <minio.url>http://192.168.64.100:9005</minio.url>
+                <minio.host>192.168.64.100</minio.host>
+                <minio.port>9005</minio.port>
+                <minio.bucket>hitch</minio.bucket>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -127,7 +130,10 @@
                 <rabbit.host>172.17.0.1</rabbit.host>
                 <rabbit.port>5672</rabbit.port>
                 <kafka.addr>192.168.64.100:9103</kafka.addr>
-                <fastdfs.addr>192.168.64.100:22122</fastdfs.addr>
+                <minio.url>http://192.168.64.100:9005</minio.url>
+                <minio.host>192.168.64.100</minio.host>
+                <minio.port>9005</minio.port>
+                <minio.bucket>hitch</minio.bucket>
             </properties>
         </profile>
     </profiles>
