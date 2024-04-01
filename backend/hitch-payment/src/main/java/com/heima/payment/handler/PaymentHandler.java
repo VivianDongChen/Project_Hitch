@@ -52,23 +52,7 @@ public class PaymentHandler {
 
     public ResponseVO<OrderVO> orderQuery(PaymentVO paymentVO) throws Exception {
         OrderPO orderPO = checkOrder(paymentVO);
-        PaymentPO paymentPO = paymentAPIService.selectByOrderId(orderPO.getId());
-        if (paymentPO == null) {
-            throw new BusinessRuntimeException(BusinessErrors.DATA_NOT_EXIST);
-        }
-        //如果支付未完成
-        if (orderPO.getStatus() == 1) {
-            //查询支付状态
-            PayResultBO payResultBO = payService.orderQuery(orderPO.getId());
-            //如果支付成功修改订单状态
-            if (null != payResultBO) {
-                paymentPO.setPayInfo(payResultBO.getPayInfo());
-                if (payResultBO.isSuccess()) {
-                    updateOrderPaySucces(paymentPO, orderPO);
-                }
-            }
-        }
-        return ResponseVO.success(orderPO, paymentPO.getPayInfo());
+        return ResponseVO.success(orderPO);
     }
 
     /**

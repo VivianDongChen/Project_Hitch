@@ -30,14 +30,35 @@
                     dd.statusColor = getStatusColor(dd.status);
                     dd.time = transDate(dd.passengerStartDate);
                     renderByTemplate('#defaultpanel','#template',dd);
-                    
+                    if (dd.status != 1) { //已支付，去掉支付连接
+                        $('#defaultpanel p:last').find('a').eq(0).remove();
+                    }
                 }
             },
             error : function(){
                 
             }
         });
-        
+
+        function confirmPay(orderId){
+
+            $.ajax({
+                type : "POST",
+                url  : "/payment/api/confirmPay/"+orderId,
+                cache : false,
+                success : function(d){
+                    console.log(d);
+                    if(d.code == 200){
+                        showMsg(d.data[0]);
+                        toUrl('order.html',1000);
+                    }
+                },
+                error : function(){
+
+                }
+            });
+
+        }
 
         $(function(){
             
@@ -64,6 +85,7 @@
         </p>
         <p style="color:darkgoldenrod">订单金额：{cost}</p>
         <p style="text-align:right;">
+            <a data-ajax="false" href="javascript:confirmPay('{id}')" style="text-decoration:none">到款确认</a> &nbsp;
             <a data-ajax="false" href="../message.html?t={passengerStrokeId}" style="text-decoration:none">联系ta&gt;&gt;</a>
         </p>
     </div>

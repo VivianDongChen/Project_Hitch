@@ -63,10 +63,11 @@ public class AccountVO implements VO {
     /**
      * 用户头像
      */
-    @InitialResolver(resolver = InitialResolverType.DEF_VALUE, groups = {Group.Create.class}, def = HtichConstants.ACCOUNT_DEFAULT_AVATAR)
+//    @InitialResolver(resolver = InitialResolverType.DEF_VALUE, groups = {Group.Create.class}, def = HtichConstants.ACCOUNT_DEFAULT_AVATAR)
     private String avatar;
 
-
+//    @InitialResolver(resolver = InitialResolverType.DEF_VALUE, groups = {Group.Create.class}, def = HtichConstants.ACCOUNT_DEFAULT_PAYCODE)
+    private String paycode;
     /**
      * 状态 禁用：0
      * 正常：1
@@ -107,6 +108,14 @@ public class AccountVO implements VO {
 
     public String getId() {
         return id;
+    }
+
+    public String getPaycode() {
+        return paycode;
+    }
+
+    public void setPaycode(String paycode) {
+        this.paycode = paycode;
     }
 
     public void setId(String id) {

@@ -9,6 +9,7 @@
         <result column="phone" jdbcType="VARCHAR" property="phone"/>
         <result column="role" jdbcType="TINYINT" property="role"/>
         <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
+        <result column="paycode" jdbcType="VARCHAR" property="paycode"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="REVISION" jdbcType="INTEGER" property="revision"/>
         <result column="CREATED_BY" jdbcType="VARCHAR" property="createdBy"/>
@@ -17,7 +18,7 @@
         <result column="UPDATED_TIME" jdbcType="TIMESTAMP" property="updatedTime"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, username, useralias, password, phone, role, avatar, status, REVISION, CREATED_BY,
+    id, username, useralias, password, phone, role, avatar, paycode,status, REVISION, CREATED_BY,
     CREATED_TIME, UPDATED_BY, UPDATED_TIME
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -48,12 +49,12 @@
   </delete>
     <insert id="insert" parameterType="com.heima.modules.po.AccountPO">
         insert IGNORE into t_account (id,username, useralias, password,
-        phone, role, avatar,
+        phone, role, avatar,paycode,
         status, REVISION,
         CREATED_BY, CREATED_TIME, UPDATED_BY,
         UPDATED_TIME)
         values (#{id,jdbcType=VARCHAR},#{username,jdbcType=VARCHAR}, #{useralias,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
-        #{phone,jdbcType=VARCHAR}, #{role,jdbcType=TINYINT}, #{avatar,jdbcType=VARCHAR},
+        #{phone,jdbcType=VARCHAR}, #{role,jdbcType=TINYINT}, #{avatar,jdbcType=VARCHAR}, #{paycode,jdbcType=VARCHAR},
         #{status,jdbcType=TINYINT}, #{revision,jdbcType=INTEGER},
         #{createdBy,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, #{updatedBy,jdbcType=VARCHAR},
         #{updatedTime,jdbcType=TIMESTAMP})
@@ -80,6 +81,9 @@
             </if>
             <if test="avatar != null">
                 avatar,
+            </if>
+            <if test="paycode != null">
+                paycode,
             </if>
             <if test="status != null">
                 status,
@@ -119,6 +123,9 @@
             </if>
             <if test="avatar != null">
                 #{avatar,jdbcType=VARCHAR},
+            </if>
+            <if test="paycode != null">
+                #{paycode,jdbcType=VARCHAR},
             </if>
             <if test="status != null">
                 #{status,jdbcType=TINYINT},
@@ -161,6 +168,9 @@
             <if test="avatar != null">
                 avatar = #{avatar,jdbcType=VARCHAR},
             </if>
+            <if test="paycode != null">
+                paycode = #{paycode,jdbcType=VARCHAR},
+            </if>
             <if test="status != null">
                 status = #{status,jdbcType=TINYINT},
             </if>
@@ -190,6 +200,7 @@
       phone = #{phone,jdbcType=VARCHAR},
       role = #{role,jdbcType=TINYINT},
       avatar = #{avatar,jdbcType=VARCHAR},
+        paycode = #{paycode,jdbcType=VARCHAR},
       status = #{status,jdbcType=TINYINT},
       REVISION = #{revision,jdbcType=INTEGER},
       CREATED_BY = #{createdBy,jdbcType=VARCHAR},

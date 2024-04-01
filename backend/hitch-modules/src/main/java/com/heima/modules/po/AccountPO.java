@@ -49,6 +49,9 @@ public class AccountPO implements Serializable, PO {
      */
     private String avatar;
 
+    /*收款码*/
+    private String paycode;
+
 
     /**
      * 状态 禁用：0
@@ -85,6 +88,14 @@ public class AccountPO implements Serializable, PO {
      * t_account
      */
     private static final long serialVersionUID = 1L;
+
+    public String getPaycode() {
+        return paycode;
+    }
+
+    public void setPaycode(String paycode) {
+        this.paycode = paycode;
+    }
 
     public String getId() {
         return id;

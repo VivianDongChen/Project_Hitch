@@ -45,7 +45,11 @@
                     }
                 }else{
                     var wx = d.data[0].codeUrl;
-                    $('#qrcode').attr('src',wx);
+                    var qrcode = new QRCode(document.getElementById("qrcode"), {
+                        width : 200,
+                        height : 200
+                    });
+                    qrcode.makeCode(wx);
                 }
             });
 
@@ -56,7 +60,7 @@
             $.post('/payment/api/query',JSON.stringify({orderId:getParam('id')}),function(d){
                 console.log(d);
                 if(d.code == 200 && d.data[0].status == 2){
-                    showMsg('司机已确认到款');
+                    showMsg('支付成功');
                     toUrl('order.html',1000);
                 }else if(manual){
                     showMsg(d.message);
@@ -85,10 +89,9 @@
     <div style="margin-top:10px;"></div>
 
     <div id="content" class="ui-content2" style="padding:20px;line-height: 30px;">
+        <h2 style="color:green;text-align: center;">微信支付</h2>
         <br>
-        <div>
-            <img id="qrcode" src="/web/img/default-paycode.jpg" style="width: 100%;height: 100%">
-        </div>
+        <div id="qrcode" style="padding-left:60px;"></div>
         <h3 id="time" style="color: brown; text-align: center;">支付金额：￥<span id="cost"></span></h3>
         <br>
         <button onclick="queryOrder(true)">我已支付</button>

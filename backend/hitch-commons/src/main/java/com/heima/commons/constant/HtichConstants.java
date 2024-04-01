@@ -37,6 +37,7 @@ public interface HtichConstants {
     String STROKE_START_GEO = "hitch";
 
     String ACCOUNT_DEFAULT_AVATAR = "/web/img/default-header.jpg";
+    String ACCOUNT_DEFAULT_PAYCODE = "/web/img/default-paycode.jpg";
 
     String BAIDU_AI_RESULT = "BAIDU_AI_RESULT";
 
