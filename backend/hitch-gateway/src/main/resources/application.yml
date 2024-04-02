@@ -1,11 +1,11 @@
 server:
-  port: @project.server.prot@
+  port: 8888
 spring:
   application:
-    name: @project.server.name@
+    name: hitch-gateway-server
   cloud:
     nacos:
-      server-addr: @nacos.addr@
+      server-addr: 192.168.64.100:8848
     gateway:
       routes:
         # 账户服务API代理
@@ -52,6 +52,6 @@ spring:
         - TokenAuth=/account/api/login;/account/api/register;/payment/api/nofify
 
   redis:
-    host: @redis.host@
-    port: @redis.port@
+    host: 192.168.64.100
+    port: 6379
     timeout: 1000

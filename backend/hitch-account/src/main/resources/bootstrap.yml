@@ -1,14 +1,14 @@
 server:
-  port: @project.server.prot@
+  port: 8007
   servlet:
-    context-path: @project.context.path@
+    context-path: /account
 spring:
   application:
-    name: @project.server.name@
+    name: hitch-account-server
   cloud:
     nacos:
-      server-addr: @nacos.addr@
+      server-addr: 192.168.64.100:8848
       config:
-        server-addr: @nacos.addr@
+        server-addr: 192.168.64.100:8848
         prefix: taxi-feign-common
         file-extension: yaml

@@ -70,8 +70,8 @@
         })
 
         function validBtn() {
-            if(!($('.cardIdFrontPhoto').attr('src').startsWith('/group1'))
-                || !($('.cardIdBackPhoto').attr('src').startsWith('/group1'))){
+            if(!($('.cardIdFrontPhoto').attr('src').startsWith('http'))
+                || !($('.cardIdBackPhoto').attr('src').startsWith('http'))){
                 showMsg('您必须先上传身份证');
                 return;
             }

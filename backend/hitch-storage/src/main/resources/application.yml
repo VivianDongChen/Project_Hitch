@@ -1,15 +1,15 @@
 server:
-  port: @project.server.prot@
+  port: 8003
   servlet:
-    context-path: @project.context.path@
+    context-path: /storage
 spring:
   application:
-    name: @project.server.name@
+    name: hitch-storage-server
     ######################### 数据源连接池的配置信息  #################
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://@mysql.addr@/hitch?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    url: jdbc:mysql://192.168.64.100:3306/hitch?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
     username: root
     password: root
     initialSize: 10
@@ -19,7 +19,7 @@ spring:
   #### nacos 配置#######
   cloud:
     nacos:
-      server-addr: @nacos.addr@
+      server-addr: 192.168.64.100:8848
 
 #  cache:
 #    type: redis
@@ -29,8 +29,8 @@ spring:
 #      use-key-prefix: true
 
   redis:
-    host: @redis.host@
-    port: @redis.port@
+    host: 192.168.64.100
+    port: 6379
     jedis:
       pool:
         max-active: 8
@@ -40,8 +40,8 @@ spring:
     lettuce:
       shutdown-timeout: 0
   rabbitmq:
-    host: @rabbit.host@
-    port: @rabbit.port@
+    host: 192.168.64.100
+    port: 5672
     username: guest
     password: guest
     virtual-host: /
@@ -55,10 +55,10 @@ spring:
 #例如：http://192.168.64.100:9005/prize/1701754725603.jpeg
 #所以要保障其可访问性，尤其是docker部署的时候，应该是宿主机暴露的端口！
 minio:
-  url: @minio.url@
-  host: @minio.host@
-  port: @minio.port@
-  bucket: @minio.bucket@
+  url: http://192.168.64.100:9005
+  host: 192.168.64.100
+  port: 9005
+  bucket: hitch
   username: minioadmin
   password: minioadmin
 

@@ -1,7 +1,7 @@
 spring:
   redis:
-    host: @redis.host@
-    port: @redis.port@
+    host: 192.168.64.100
+    port: 6379
     jedis:
       pool:
         max-active: 8
@@ -12,8 +12,8 @@ spring:
       shutdown-timeout: 0
   data:
     mongodb:
-      host: @mongo.host@
-      port: @mongo.port@
+      host: 192.168.64.100
+      port: 27017
       database: notice
 #logging:
 #  level:

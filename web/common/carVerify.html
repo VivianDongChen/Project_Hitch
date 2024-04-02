@@ -66,8 +66,8 @@
         })
 
         function validBtn() {
-            if (!($('.carFrontPhoto').attr('src').startsWith('/group1'))
-                || !($('.carBackPhoto').attr('src').startsWith('/group1'))) {
+            if (!($('.carFrontPhoto').attr('src').startsWith('http'))
+                || !($('.carBackPhoto').attr('src').startsWith('http'))) {
                 showMsg('您必须先上传车辆信息');
                 return;
             }
