@@ -3,9 +3,6 @@ package com.heima.account.handler;
 import com.heima.account.service.AccountAPIService;
 import com.heima.account.service.AuthenticationAPIService;
 import com.heima.account.service.VehicleAPIService;
-import com.heima.commons.ai.AIResult;
-import com.heima.commons.ai.BaiduAIHelper;
-import com.heima.commons.constant.HtichConstants;
 import com.heima.commons.domin.vo.response.ResponseVO;
 import com.heima.commons.entity.SessionContext;
 import com.heima.commons.enums.BusinessErrors;
@@ -21,13 +18,19 @@ import com.heima.modules.po.VehiclePO;
 import com.heima.modules.vo.AccountVO;
 import com.heima.modules.vo.AuthenticationVO;
 import com.heima.modules.vo.VehicleVO;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.net.URL;
+
 @Component
 public class AccountHandler {
-
+    private final static Logger logger = LoggerFactory.getLogger(AccountHandler.class);
     private SnowflakeIdWorker idWorker = new SnowflakeIdWorker(0, 0);
 
     @Autowired
@@ -46,8 +49,7 @@ public class AccountHandler {
     private VehicleAPIService vehicleAPIService;
 
     @Autowired
-    private BaiduAIHelper baiduAIHelper;
-
+    private AiHelper aiHelper;
 
     /**
      * 用户注册
@@ -190,13 +192,17 @@ public class AccountHandler {
         if (StringUtils.isEmpty(cardIdFrontPhotoAddr)) {
             throw new BusinessRuntimeException(BusinessErrors.DATA_NOT_EXIST, "身份证正面照片不存在");
         }
-        AIResult aiResult = baiduAIHelper.getIdCardMap(HtichConstants.getImageUrl(cardIdFrontPhotoAddr));
-        authenticationPO.setBirth(aiResult.getParameter("birth"));
-        authenticationPO.setUseralias(aiResult.getParameter("useralias"));
-        authenticationPO.setCardId(aiResult.getParameter("idCardNumber"));
-        //设置Account用户信息
-        accountPO.setUseralias(authenticationPO.getUseralias());
-        accountPO.setStatus(1);
+
+        //TODO:个人实名认证（选做）
+        //【可选作业】：调百度完成身份证识别，将识别信息更新到数据库对应字段
+        //文档（身份证识别）：https://cloud.baidu.com/doc/OCR/s/rk3h7xzck
+        //文档（h5人脸实名认证接口）：https://ai.baidu.com/ai-doc/FACE/skxie72kp
+        //备注：真实的实名认证需要企业身份，个人无法使用。
+
+
+        //真实业务需要设置Account用户真实姓名，这里直接用用户名
+        accountPO.setUseralias(accountPO.getUsername());
+        accountPO.setStatus(1); //状态改成已认证
         //更新Redis缓存
         sessionTemplate.updateSessionUseralias(accountPO.getId(), accountPO.getUseralias());
         accountAPIService.update(accountPO);
@@ -219,6 +225,7 @@ public class AccountHandler {
         return ResponseVO.success(vehiclePO);
     }
 
+
     /**
      * 修改车辆信息
      *
@@ -239,26 +246,24 @@ public class AccountHandler {
 
 
     /**
-     * 身份认证接口
+     * 车牌识别
      *
      * @return
      */
     public ResponseVO<VehicleVO> vehicleAuth() {
         AccountPO accountPO = getCurrentAccountPO();
         VehiclePO vehiclePO = getVehiclePO(accountPO);
-        if (null == vehiclePO) {
-            throw new BusinessRuntimeException(BusinessErrors.DATA_NOT_EXIST, "车辆认证信息不存在");
+        try {
+            //TODO:车辆信息验证
+            String license = aiHelper.getLicense(vehiclePO);
+            vehiclePO.setCarNumber(license);
+            accountPO.setRole(1);
+            accountAPIService.update(accountPO);
+            vehicleAPIService.update(vehiclePO);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseVO.error(e.getMessage());
         }
-        String carFrontPhotoAddr = vehiclePO.getCarFrontPhoto();
-        if (StringUtils.isEmpty(carFrontPhotoAddr)) {
-            throw new BusinessRuntimeException(BusinessErrors.DATA_NOT_EXIST, "车辆正面照片不存在");
-        }
-        AIResult aiResult = baiduAIHelper.getLicensePlateMap(HtichConstants.getImageUrl(carFrontPhotoAddr));
-        vehiclePO.setCarNumber(aiResult.getParameter("card_number"));
-        //设置用户角色为司机
-        accountPO.setRole(1);
-        accountAPIService.update(accountPO);
-        vehicleAPIService.update(vehiclePO);
         return ResponseVO.success(vehiclePO);
     }
 
@@ -321,6 +326,7 @@ public class AccountHandler {
         }
         //验证密码
         if (!CommonsUtils.encodeMD5(accountVO.getPassword()).equals(accountPO.getPassword())) {
+            logger.warn("password error! account="+accountPO.getUseralias());
             throw new BusinessRuntimeException(BusinessErrors.PARAM_CANNOT_EMPTY, "用户名或者密码错误");
         }
         return (AccountVO) CommonsUtils.toVO(accountPO);

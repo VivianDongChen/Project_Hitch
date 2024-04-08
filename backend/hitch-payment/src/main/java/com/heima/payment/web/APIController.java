@@ -31,7 +31,7 @@ import java.util.Map;
 @RequestMapping("/api/")
 @Api(value = "支付操作Controller", tags = {"支付管理"})
 @ApiResponses(@ApiResponse(code = 200, message = "处理成功"))
-public class APIController {
+public class  APIController {
     @Autowired
     private PaymentHandler paymentHandler;
     @Autowired

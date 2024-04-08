@@ -12,6 +12,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +28,7 @@ public class APIController {
     @Autowired
     private AccountHandler accountHandler;
 
+    private final static Logger logger = LoggerFactory.getLogger(APIController.class);
 
     @ApiOperation(value = "用户注册接口", tags = {"账户管理"})
     @PostMapping("/register")

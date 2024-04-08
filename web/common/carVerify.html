@@ -73,10 +73,15 @@
             }
             $.post('/account/api/vehicleAuth', '{}', function (data) {
                 console.log(data);
-                renderByTemplate('#authDiv', '#template', data.data[0]);
-                showMsg(data.message);
-                topDiv.scrollIntoView();
-                toUrl('userCenter.html', 1500);
+                if(data.code == -1){
+                    showMsg('认证失败！');
+                }else{
+                    renderByTemplate('#authDiv', '#template', data.data[0]);
+                    showMsg(data.message);
+                    topDiv.scrollIntoView();
+                    toUrl('userCenter.html', 1500);
+                }
+
             });
         }
 
