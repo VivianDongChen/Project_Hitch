@@ -4,10 +4,6 @@ package com.heima.commons.utils;
 import com.heima.commons.domin.po.PO;
 import com.heima.commons.domin.vo.VO;
 import com.heima.commons.utils.reflect.ReflectUtils;
-import com.heima.commons.valuation.BasicValuation;
-import com.heima.commons.valuation.FuelCostValuation;
-import com.heima.commons.valuation.StartPriceValuation;
-import com.heima.commons.valuation.Valuation;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -20,7 +16,6 @@ import java.util.*;
 
 public class CommonsUtils {
 
-    private static final Valuation valuation = new FuelCostValuation(new StartPriceValuation(new BasicValuation(null)));
 
     private static final NumberFormat numberFormat = NumberFormat.getInstance(Locale.getDefault());
 
@@ -106,16 +101,7 @@ public class CommonsUtils {
         return poList;
     }
 
-    /**
-     * 计算价格
-     *
-     * @param unitM
-     * @return
-     */
-    public static float valuationPrice(int unitM) {
-        float km = unitM / 1000;
-        return valuation.calculation(km);
-    }
+
 
     /**
      * 输入流转换为xml字符串

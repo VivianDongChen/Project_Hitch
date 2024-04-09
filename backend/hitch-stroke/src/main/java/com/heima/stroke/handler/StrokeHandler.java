@@ -1,8 +1,6 @@
 package com.heima.stroke.handler;
 
-import ch.hsr.geohash.GeoHash;
 import com.alibaba.fastjson.JSON;
-import com.github.xiaoymin.knife4j.core.util.CommonUtils;
 import com.heima.commons.constant.HtichConstants;
 import com.heima.commons.domin.bo.*;
 import com.heima.commons.domin.vo.response.ResponseVO;
@@ -22,14 +20,16 @@ import com.heima.stroke.service.AccountAPIService;
 import com.heima.stroke.service.LocationService;
 import com.heima.stroke.service.OrderAPIService;
 import com.heima.stroke.service.StrokeAPIService;
+import com.heima.stroke.handler.valuation.BasicValuation;
+import com.heima.stroke.handler.valuation.FuelCostValuation;
+import com.heima.stroke.handler.valuation.StartPriceValuation;
+import com.heima.stroke.handler.valuation.Valuation;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.*;
 
 @Component
@@ -392,6 +392,10 @@ public class StrokeHandler {
         }
     }
 
+    @Autowired
+    BaiduMapClient baiduMapClient;
+    //构建装饰着
+    private static final Valuation valuation = new FuelCostValuation(new StartPriceValuation(new BasicValuation(null)));
     /**
      * 添加订单
      *
@@ -400,7 +404,23 @@ public class StrokeHandler {
      */
     private void addOrder(StrokePO inviter, StrokePO invitee) {
         OrderPO orderPO = new OrderPO();
-        orderPO.setId(CommonsUtils.getWorkerID());
+        orderPO.setId(CommonsUtils.getWorkerID());//雪花算法主键序列
+        orderPO.setStatus(0);//初始状态：未支付
+        //TODO:任务3-乘客送达后生成订单-3
+
+        //注意传入的两个参数，包含了下面想要的信息：
+
+        //给orderPo设置基本的乘客、车主、行程信息
+
+        //对接百度路径计算，给orderPo设置路径长度distance、估计时间duration
+        //对接文档：https://lbs.baidu.com/faq/api?title=webapi/routchtout-drive
+
+        //完成计费功能，给orderPo设置金额
+        //计费规则：3公里以内起步价13元；3公里以上2.3元/公里；燃油附加费1次收取1元
+        //建议：使用装饰着模式来完成
+
+
+
         orderPO.setDriverStrokeId(inviter.getId());
         orderPO.setDriverId(inviter.getPublisherId());
         orderPO.setPassengerStrokeId(invitee.getId());
@@ -409,26 +429,20 @@ public class StrokeHandler {
         orderPO.setCreatedTime(new Date());
         orderPO.setUpdatedBy(invitee.getCreatedBy());
         orderPO.setUpdatedTime(new Date());
-        orderPO.setStatus(0);
+
         //批量算路服务
-        RoutePlanResultBO resultBO = getRoutePlanResult(invitee);
+        String start = invitee.getStartGeoLat() + "," + invitee.getStartGeoLng();
+        String end = invitee.getEndGeoLat() + "," + invitee.getEndGeoLng();
+        RoutePlanResultBO resultBO = baiduMapClient.pathPlanning(start, end);
         if (null != resultBO) {
             orderPO.setDistance(resultBO.getDistance().getValue());
             orderPO.setEstimatedTime(resultBO.getDuration().getValue());
-            orderPO.setCost(CommonsUtils.valuationPrice(orderPO.getDistance()));
+            orderPO.setCost(valuation.calculation(orderPO.getDistance()/1000));
         }
         orderAPIService.add(orderPO);
     }
 
-    private RoutePlanResultBO getRoutePlanResult(StrokePO invitee) {
-        String start = invitee.getStartGeoLat() + "," + invitee.getStartGeoLng();
-        String end = invitee.getEndGeoLat() + "," + invitee.getEndGeoLng();
-        List<RoutePlanResultBO> routePlanResultBOS = BaiduMapClient.pathPlanning(start, end);
-        if (null != routePlanResultBOS && !routePlanResultBOS.isEmpty()) {
-            return routePlanResultBOS.stream().findFirst().get();
-        }
-        return null;
-    }
+
 
     /**
      * 获取剩余座位数

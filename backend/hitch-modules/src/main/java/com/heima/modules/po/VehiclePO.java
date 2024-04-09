@@ -24,12 +24,12 @@ public class VehiclePO implements Serializable, PO {
     private String carFrontPhoto;
 
     /**
-     * 车牌背部照片
+     * 行驶证照片
      */
     private String carBackPhoto;
 
     /**
-     * 车牌侧部照片
+     * 人车同框照片
      */
     private String carSidePhoto;
 

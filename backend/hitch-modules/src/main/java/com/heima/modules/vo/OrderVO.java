@@ -113,12 +113,12 @@ public class OrderVO implements VO {
     private String carFrontPhoto;
 
     /**
-     * 车牌背部照片
+     * 行驶证照片
      */
     private String carBackPhoto;
 
     /**
-     * 车牌侧部照片
+     * 人车同框照片
      */
     private String carSidePhoto;
 

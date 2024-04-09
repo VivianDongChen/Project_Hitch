@@ -1,44 +1,49 @@
-package com.heima.commons.utils;
+package com.heima.stroke.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.heima.commons.domin.bo.RoutePlanResultBO;
+import com.heima.commons.utils.HttpClientUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class BaiduMapClient {
-    private static final String API_URL = "https://api.map.baidu.com/routematrix/v2/driving";
-    /*@Value(("${baidu.map.ak}"))*/
-    private static final String ak = "EoHbxdtKC097db8DVk1Qq1LVe1Ip2Yx4";
+    @Value("${baidu.map.api}")
+    private String api;
+    @Value("${baidu.map.ak}")
+    private String ak;
 
+    private final static Logger logger = LoggerFactory.getLogger(BaiduMapClient.class);
 
-    public static List<RoutePlanResultBO> pathPlanning(String origins, String destinations) {
+    public RoutePlanResultBO pathPlanning(String origins, String destinations) {
         Map<String, String> reqMap = new HashMap<>();
         reqMap.put("ak", ak);
         reqMap.put("origins", origins);
         reqMap.put("destinations", destinations);
         String result = null;
+        logger.info("send to Baidu:{}",reqMap);
         try {
-            result = HttpClientUtils.doGet(API_URL, reqMap);
+            result = HttpClientUtils.doGet(api, reqMap);
+            logger.info("get from Baidu:{}",result);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return resultAssemble(result);
-    }
-
-    public static List<RoutePlanResultBO> resultAssemble(String result) {
-        List<RoutePlanResultBO> resultBOS = null;
         JSONObject jsonObject = (JSONObject) JSON.parse(result);
         if (null != jsonObject && jsonObject.getString("status").equals("0")) {
             JSONArray resultArray = jsonObject.getJSONArray("result");
             if (null != resultArray && !resultArray.isEmpty()) {
-                resultBOS = resultArray.toJavaList(RoutePlanResultBO.class);
+                return resultArray.toJavaList(RoutePlanResultBO.class).get(0);
             }
         }
-        return resultBOS;
+        return null;
     }
 
 }

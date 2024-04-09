@@ -83,7 +83,14 @@ public class AccountHandler {
      * @return
      */
     public ResponseVO<AccountVO> modifyPassword(AccountVO accountVO) {
+        //获取当前登录用户的id
         String userid = accountVO.getCurrentUserId();
+        //TODO:任务1-修改密码-1day
+        //获取当前用户在数据库里的信息
+        //旧密码加密，对比数据库，防止输入错误
+        //新密码加密，对比旧密码，不允许相同
+        //校验通过，将新密码写入数据库，修改成功
+
         if (StringUtils.isAnyEmpty(accountVO.getPassword(), accountVO.getNewPassword())) {
             throw new BusinessRuntimeException(BusinessErrors.DATA_NOT_EXIST, "新老密码不允许为空");
         }
@@ -193,7 +200,7 @@ public class AccountHandler {
             throw new BusinessRuntimeException(BusinessErrors.DATA_NOT_EXIST, "身份证正面照片不存在");
         }
 
-        //TODO:个人实名认证（选做）
+        //TODO:任务2-个人实名认证（选做）
         //【可选作业】：调百度完成身份证识别，将识别信息更新到数据库对应字段
         //文档（身份证识别）：https://cloud.baidu.com/doc/OCR/s/rk3h7xzck
         //文档（h5人脸实名认证接口）：https://ai.baidu.com/ai-doc/FACE/skxie72kp
@@ -254,7 +261,7 @@ public class AccountHandler {
         AccountPO accountPO = getCurrentAccountPO();
         VehiclePO vehiclePO = getVehiclePO(accountPO);
         try {
-            //TODO:车辆信息验证
+            //TODO:任务2-车辆信息验证-2day
             String license = aiHelper.getLicense(vehiclePO);
             vehiclePO.setCarNumber(license);
             accountPO.setRole(1);

@@ -1,4 +1,4 @@
-package com.heima.commons.valuation;
+package com.heima.stroke.handler.valuation;
 
 public class StartPriceValuation implements Valuation {
     private Valuation valuation;

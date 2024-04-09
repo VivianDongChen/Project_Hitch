@@ -46,7 +46,7 @@ public class OrderHandler {
         orderPO.setStatus(CommonsUtils.randomInt(1, 2));
         orderPO.setEstimatedTime(CommonsUtils.randomInt(600, 4800));
         orderPO.setDistance(CommonsUtils.randomInt(5000, 75000));
-        orderPO.setCost(CommonsUtils.valuationPrice(orderPO.getDistance()));
+        orderPO.setCost(100f);
         orderPO.setDriverId("111");
         orderPO.setPassengerId("222");
         orderPO.setDriverStrokeId("333");
