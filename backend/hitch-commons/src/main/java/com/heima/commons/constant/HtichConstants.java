@@ -32,7 +32,6 @@ public interface HtichConstants {
 
     String NOTICE_COLLECTION = "NOTICE_COLLECTION";
 
-    String LOCATION_COLLECTION = "LOCATION_COLLECTION";
 
     String STROKE_START_GEO = "hitch";
 

@@ -10,14 +10,11 @@ import com.heima.commons.enums.QuickConfirmState;
 import com.heima.commons.exception.BusinessRuntimeException;
 import com.heima.commons.utils.*;
 import com.heima.modules.po.AccountPO;
-import com.heima.modules.po.LocationPO;
 import com.heima.modules.po.OrderPO;
 import com.heima.modules.po.StrokePO;
-import com.heima.modules.vo.LocationVO;
 import com.heima.modules.vo.StrokeVO;
 import com.heima.stroke.rabbitmq.MQProducer;
 import com.heima.stroke.service.AccountAPIService;
-import com.heima.stroke.service.LocationService;
 import com.heima.stroke.service.OrderAPIService;
 import com.heima.stroke.service.StrokeAPIService;
 import com.heima.stroke.handler.valuation.BasicValuation;
@@ -43,9 +40,6 @@ public class StrokeHandler {
 
     @Autowired
     private AccountAPIService accountAPIService;
-
-    @Autowired
-    private LocationService locationService;
 
     @Autowired
     private RedisHelper redisHelper;
@@ -160,8 +154,11 @@ public class StrokeHandler {
         // 0 = 未确认， 1 = 已确认 ， 2= 已拒绝
         redisHelper.addHash(HtichConstants.STROKE_INVITE_PREFIX, inviteeTripId, inviterTripId, String.valueOf(InviteState.UNCONFIRMED.getCode()));
         redisHelper.addHash(HtichConstants.STROKE_INVITE_PREFIX, inviterTripId, inviteeTripId, String.valueOf(InviteState.UNCONFIRMED.getCode()));
+        //TODO:任务4.4-邀请后发送延迟消息-2day
         //发送延时消息
         mqProducer.sendOver(JSON.toJSONString(strokeVO));
+
+
         quickConfirm(strokeVO);
         return ResponseVO.success(null);
     }
@@ -179,8 +176,8 @@ public class StrokeHandler {
         String tripeeStatus = redisHelper.getHash(HtichConstants.STROKE_INVITE_PREFIX, inviteeTripId, inviterTripId);
         String triperStatus = redisHelper.getHash(HtichConstants.STROKE_INVITE_PREFIX, inviterTripId, inviteeTripId);
         //如果是邀请状态，未确认
-        if (tripeeStatus.equals(String.valueOf(InviteState.UNCONFIRMED.getCode()))
-                && triperStatus.equals(String.valueOf(InviteState.UNCONFIRMED.getCode()))) {
+        if (String.valueOf(InviteState.UNCONFIRMED.getCode()).equals(tripeeStatus)
+                && String.valueOf(InviteState.UNCONFIRMED.getCode()).equals(triperStatus)) {
             //设置为超时状态
             redisHelper.addHash(HtichConstants.STROKE_INVITE_PREFIX, inviteeTripId, inviterTripId, String.valueOf(InviteState.TIMEOUT.getCode()));
             redisHelper.addHash(HtichConstants.STROKE_INVITE_PREFIX, inviterTripId, inviteeTripId, String.valueOf(InviteState.TIMEOUT.getCode()));
@@ -406,7 +403,7 @@ public class StrokeHandler {
         OrderPO orderPO = new OrderPO();
         orderPO.setId(CommonsUtils.getWorkerID());//雪花算法主键序列
         orderPO.setStatus(0);//初始状态：未支付
-        //TODO:任务3-乘客送达后生成订单-3
+        //TODO:任务3-生成订单-3day
 
         //注意传入的两个参数，包含了下面想要的信息：
 
@@ -694,25 +691,5 @@ public class StrokeHandler {
         return hitchGeoBO.getStartGeo().toKilometre() + ":" + hitchGeoBO.getEndGeo().toKilometre().toString();
     }
 
-    /**
-     * 发送实时位置服务
-     *
-     * @param locationVO
-     * @return
-     */
-    public ResponseVO<LocationVO> realtimeLocation(LocationVO locationVO) {
-        mqProducer.sendLocation(JSON.toJSONString(locationVO));
-        return ResponseVO.success(locationVO);
-    }
 
-    /**
-     * 获取当前位置信息
-     *
-     * @param tripid
-     * @return
-     */
-    public ResponseVO<LocationVO> currentLocation(String tripid) {
-        LocationPO locationPO = locationService.currentLocation(tripid);
-        return ResponseVO.success(locationPO);
-    }
 }

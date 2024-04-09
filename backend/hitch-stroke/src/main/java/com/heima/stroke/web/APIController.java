@@ -116,17 +116,5 @@ public class APIController {
         return strokeHandler.delivery(tripid);
     }
 
-    @ApiOperation(value = "实时位置", tags = {"行程管理"})
-    @PostMapping("/realtimeLocation")
-    public ResponseVO<LocationVO> realtimeLocation(@RequestBody LocationVO locationVO) {
-        locationVO.setTime(new Date());
-        return strokeHandler.realtimeLocation(locationVO);
-    }
-
-    @ApiOperation(value = "获取当前位置", tags = {"行程管理"})
-    @PostMapping("/currentLocation/{tripid}")
-    public ResponseVO<LocationVO> currentLocation(@PathVariable("tripid") String tripid) {
-        return strokeHandler.currentLocation(tripid);
-    }
 
 }

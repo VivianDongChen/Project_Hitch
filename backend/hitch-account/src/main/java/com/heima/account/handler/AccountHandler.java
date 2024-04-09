@@ -200,7 +200,7 @@ public class AccountHandler {
             throw new BusinessRuntimeException(BusinessErrors.DATA_NOT_EXIST, "身份证正面照片不存在");
         }
 
-        //TODO:任务2-个人实名认证（选做）
+        //TODO:任务2.2-个人实名认证（选做）
         //【可选作业】：调百度完成身份证识别，将识别信息更新到数据库对应字段
         //文档（身份证识别）：https://cloud.baidu.com/doc/OCR/s/rk3h7xzck
         //文档（h5人脸实名认证接口）：https://ai.baidu.com/ai-doc/FACE/skxie72kp
@@ -261,7 +261,7 @@ public class AccountHandler {
         AccountPO accountPO = getCurrentAccountPO();
         VehiclePO vehiclePO = getVehiclePO(accountPO);
         try {
-            //TODO:任务2-车辆信息验证-2day
+            //TODO:任务2.1-车辆信息验证-2day
             String license = aiHelper.getLicense(vehiclePO);
             vehiclePO.setCarNumber(license);
             accountPO.setRole(1);

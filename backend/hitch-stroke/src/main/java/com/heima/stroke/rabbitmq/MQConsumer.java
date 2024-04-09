@@ -1,14 +1,12 @@
 package com.heima.stroke.rabbitmq;
 
 import com.alibaba.fastjson.JSON;
-import com.heima.commons.utils.CommonsUtils;
-import com.heima.modules.po.LocationPO;
-import com.heima.modules.vo.LocationVO;
 import com.heima.modules.vo.StrokeVO;
 import com.heima.stroke.configuration.RabbitConfig;
 import com.heima.stroke.handler.StrokeHandler;
-import com.heima.stroke.service.LocationService;
 import com.rabbitmq.client.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.BatchMessageListener;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.*;
@@ -17,21 +15,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 行程消费者类
+ * //TODO:任务4.3-接收死信队列消息
  */
 @Component
-public class MQConsumer implements BatchMessageListener {
-
+public class MQConsumer{
+    private final static Logger logger = LoggerFactory.getLogger(MQConsumer.class);
 
     @Autowired
     private StrokeHandler strokeHandler;
 
-    @Autowired
-    private LocationService locationService;
 
     /**
      * 行程超时监听
@@ -48,7 +44,9 @@ public class MQConsumer implements BatchMessageListener {
                     })
     @RabbitHandler
     public void processStroke(Message massage, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) {
+
         StrokeVO strokeVO = JSON.parseObject(massage.getBody(), StrokeVO.class);
+        logger.info("get dead msg:{}",JSON.toJSONString(strokeVO));
         if (null == strokeVO) {
             return;
         }
@@ -61,29 +59,4 @@ public class MQConsumer implements BatchMessageListener {
         }
     }
 
-    /**
-     * 行程位置监听
-     *
-     */
-
-    @RabbitListener(
-            bindings =
-                    {
-                            @QueueBinding(value = @Queue(value = RabbitConfig.STROKE_LOCATION_QUEUE, durable = "true"),
-                                    exchange = @Exchange(value = RabbitConfig.STROKE_LOCATION_QUEUE_EXCHANGE), key = RabbitConfig.STROKE_LOCATION_KEY)
-                    }, concurrency = "10")
-    @Override
-    public void onMessageBatch(List<Message> messages) {
-        List<LocationPO> locationPOList = getLocationPOList(messages);
-        locationService.batchSaveLocation(locationPOList);
-    }
-
-    private List<LocationPO> getLocationPOList(List<Message> messages) {
-        List<LocationPO> locationPOList = new ArrayList<>();
-        for (Message message : messages) {
-            LocationVO locationVO = JSON.parseObject(message.getBody(), LocationVO.class);
-            locationPOList.add(CommonsUtils.toPO(locationVO));
-        }
-        return locationPOList;
-    }
 }
