@@ -55,9 +55,9 @@
                 function (d) {
                     d.data.forEach(e => {
                         if (e.senderId == current_user.id) {
-                            $('#history').append('<p class="msg1">' + e.message + '</p>');
+                            $('#history').append('<p class="msg1">[你]: ' + e.message + '</p>');
                         } else {
-                            $('#history').append('<p class="msg2">' + e.message + '</p>');
+                            $('#history').append('<p class="msg2">[' + e.senderUseralias + "]: " + e.message + '</p>');
                         }
                     });
                     msg_end.scrollIntoView();
@@ -81,7 +81,7 @@
                     $('#history').append('<p class="msg1">' + $(this).val() + '</p>');
                     websocket.send(JSON.stringify({
                         'receiverId': getParam('r'), //优先级1
-                        'tripId': getParam('t'), //优先级2，如果1没有，按这个查出当前reciver
+                        'tripId': getParam('t'), //优先级2，如果1没有，按这个查出当前receiver
                         'message': $(this).val()
                     })); //websocket发送消息
                     $(this).val('');
