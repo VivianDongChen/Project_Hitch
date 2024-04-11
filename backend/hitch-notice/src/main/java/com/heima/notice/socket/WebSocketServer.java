@@ -30,17 +30,9 @@ public class WebSocketServer {
     //concurrent包的线程安全Map，用来存放每个客户端对应的WebSocketServer对象。
     public final static Map<String, Session> sessionPools = new ConcurrentHashMap<>();
 
-    /**
-     * 获取所有在线用户列表
-     *
-     * @return
-     */
-    public List<String> getInLineAccountIds() {
-        List<String> list = new ArrayList();
-        list.addAll(sessionPools.keySet());
-        return list;
-    }
-
+    /*
+        用户发送ws消息，message里包含了要发送给谁
+    */
     @OnMessage
     public void onMessage(Session session, String message) {
         String accountId = getAccountId(session);
