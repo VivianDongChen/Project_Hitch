@@ -3,7 +3,6 @@ package com.heima.stroke.handler.valuation;
 public class FuelCostValuation implements Valuation {
 
     private Valuation valuation;
-    private float fuelCosPrice = 1.0F;
 
     public FuelCostValuation(Valuation valuation) {
         this.valuation = valuation;
@@ -11,7 +10,6 @@ public class FuelCostValuation implements Valuation {
 
     @Override
     public float calculation(float km) {
-        float beforeCost = (valuation == null ? 0f : valuation.calculation(km));
-        return beforeCost + fuelCosPrice;
+        return 0;
     }
 }

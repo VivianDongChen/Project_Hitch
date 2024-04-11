@@ -154,9 +154,8 @@ public class StrokeHandler {
         // 0 = 未确认， 1 = 已确认 ， 2= 已拒绝
         redisHelper.addHash(HtichConstants.STROKE_INVITE_PREFIX, inviteeTripId, inviterTripId, String.valueOf(InviteState.UNCONFIRMED.getCode()));
         redisHelper.addHash(HtichConstants.STROKE_INVITE_PREFIX, inviterTripId, inviteeTripId, String.valueOf(InviteState.UNCONFIRMED.getCode()));
-        //TODO:任务4.4-邀请后发送延迟消息-2day
         //发送延时消息
-        mqProducer.sendOver(JSON.toJSONString(strokeVO));
+        mqProducer.sendOver(strokeVO);
 
 
         quickConfirm(strokeVO);
@@ -407,12 +406,12 @@ public class StrokeHandler {
 
         //注意传入的两个参数，包含了下面想要的信息：
 
-        //给orderPo设置基本的乘客、车主、行程信息
+        //3.1 给orderPo设置基本的乘客、车主、行程信息
 
-        //对接百度路径计算，给orderPo设置路径长度distance、估计时间duration
+        //3.2 对接百度路径计算，给orderPo设置路径长度distance、估计时间duration
         //对接文档：https://lbs.baidu.com/faq/api?title=webapi/routchtout-drive
 
-        //完成计费功能，给orderPo设置金额
+        //3.3 完成计费功能，给orderPo设置金额
         //计费规则：3公里以内起步价13元；3公里以上2.3元/公里；燃油附加费1次收取1元
         //建议：使用装饰着模式来完成
 

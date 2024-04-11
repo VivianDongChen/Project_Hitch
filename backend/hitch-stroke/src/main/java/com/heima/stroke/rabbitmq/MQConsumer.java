@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * 行程消费者类
- * //TODO:任务4.3-接收死信队列消息
+ * //TODO:任务4.3-接收死信队列消息(已完成)
  */
 @Component
 public class MQConsumer{
@@ -46,7 +46,7 @@ public class MQConsumer{
     public void processStroke(Message massage, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) {
 
         StrokeVO strokeVO = JSON.parseObject(massage.getBody(), StrokeVO.class);
-        logger.info("get dead msg:{}",JSON.toJSONString(strokeVO));
+        logger.info("get dead msg:{}",massage.getBody());
         if (null == strokeVO) {
             return;
         }
