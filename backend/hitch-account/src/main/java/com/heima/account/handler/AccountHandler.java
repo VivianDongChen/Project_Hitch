@@ -91,20 +91,7 @@ public class AccountHandler {
         //新密码加密，对比旧密码，不允许相同
         //校验通过，将新密码写入数据库，修改成功
 
-        if (StringUtils.isAnyEmpty(accountVO.getPassword(), accountVO.getNewPassword())) {
-            throw new BusinessRuntimeException(BusinessErrors.DATA_NOT_EXIST, "新老密码不允许为空");
-        }
-        AccountPO accountPO = accountAPIService.getAccountByID(userid);
-        if (null == accountPO) {
-            throw new BusinessRuntimeException(BusinessErrors.DATA_NOT_EXIST, "用户信息不存在");
-        }
-        String oldPassword = CommonsUtils.encodeMD5(accountVO.getPassword());
-        String newPassword = CommonsUtils.encodeMD5(accountVO.getNewPassword());
-        if (!oldPassword.equals(accountPO.getPassword())) {
-            throw new BusinessRuntimeException(BusinessErrors.AUTHENTICATION_ERROR, "旧密码输入错误");
-        }
-        accountPO.setPassword(newPassword);
-        accountAPIService.update(accountPO);
+
         return ResponseVO.success(null, "修改密码成功");
     }
 
@@ -261,7 +248,7 @@ public class AccountHandler {
         AccountPO accountPO = getCurrentAccountPO();
         VehiclePO vehiclePO = getVehiclePO(accountPO);
         try {
-            //TODO:任务2.1-车辆信息验证-2day
+            //TODO:任务2.1-车辆信息验证入口-2day
             String license = aiHelper.getLicense(vehiclePO);
             vehiclePO.setCarNumber(license);
             accountPO.setRole(1);

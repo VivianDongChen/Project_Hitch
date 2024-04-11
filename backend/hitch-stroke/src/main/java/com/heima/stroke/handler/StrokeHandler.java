@@ -403,7 +403,7 @@ public class StrokeHandler {
         OrderPO orderPO = new OrderPO();
         orderPO.setId(CommonsUtils.getWorkerID());//雪花算法主键序列
         orderPO.setStatus(0);//初始状态：未支付
-        //TODO:任务3-生成订单-3day
+        //TODO:任务3.1-生成订单-3day
 
         //注意传入的两个参数，包含了下面想要的信息：
 
@@ -417,25 +417,6 @@ public class StrokeHandler {
         //建议：使用装饰着模式来完成
 
 
-
-        orderPO.setDriverStrokeId(inviter.getId());
-        orderPO.setDriverId(inviter.getPublisherId());
-        orderPO.setPassengerStrokeId(invitee.getId());
-        orderPO.setPassengerId(invitee.getPublisherId());
-        orderPO.setCreatedBy(invitee.getCreatedBy());
-        orderPO.setCreatedTime(new Date());
-        orderPO.setUpdatedBy(invitee.getCreatedBy());
-        orderPO.setUpdatedTime(new Date());
-
-        //批量算路服务
-        String start = invitee.getStartGeoLat() + "," + invitee.getStartGeoLng();
-        String end = invitee.getEndGeoLat() + "," + invitee.getEndGeoLng();
-        RoutePlanResultBO resultBO = baiduMapClient.pathPlanning(start, end);
-        if (null != resultBO) {
-            orderPO.setDistance(resultBO.getDistance().getValue());
-            orderPO.setEstimatedTime(resultBO.getDuration().getValue());
-            orderPO.setCost(valuation.calculation(orderPO.getDistance()/1000));
-        }
         orderAPIService.add(orderPO);
     }
 
