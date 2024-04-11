@@ -32,7 +32,7 @@ public class WebSocketServer {
     public final static Map<String, Session> sessionPools = new ConcurrentHashMap<>();
 
     /*
-        用户发送ws消息，message里包含了要发送给谁
+        用户发送ws消息，message为json格式{'receiverId':'接收人','tripId':'行程id','message':'消息内容'}
     */
     @OnMessage
     public void onMessage(Session session, String message) {
@@ -40,7 +40,6 @@ public class WebSocketServer {
 
 
         //调用save将消息存入mongodb：noticeHandler.saveNotice(noticeVO);
-        // 参数message的json格式可以从前台浏览器debug获取到，包含以下属性：receiverId,tripId,message
 
 
     }
