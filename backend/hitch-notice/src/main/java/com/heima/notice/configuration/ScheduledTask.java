@@ -1,6 +1,7 @@
 package com.heima.notice.configuration;
 
 
+import com.alibaba.fastjson.JSON;
 import com.heima.modules.po.NoticePO;
 import com.heima.notice.service.NoticeService;
 import com.heima.notice.socket.WebSocketServer;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.websocket.Session;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -33,19 +36,34 @@ public class ScheduledTask {
 
     @PostConstruct
     public void init() {
+        //TODO:任务5.2-推送未读消息
+        //定时调度，获取mongodb里的未读消息，推送给对应用户
         executorService.scheduleAtFixedRate(() -> {
             //获取最新需要推送的消息
             List<String> accountIds = webSocketServer.getInLineAccountIds();
+//            logger.info("msg task working,inline accounts:{}",accountIds);
             if (null != accountIds && !accountIds.isEmpty()) {
                 //在MongoDB中获取当前在线用户的暂存消息
                 List<NoticePO> pushMessagesList = noticeService.getNoticeByAccountIds(accountIds);
                 //校验消息
                 if (null != pushMessagesList && !pushMessagesList.isEmpty()) {
-                    logger.debug("推送消息线程工作工作中,推送数据条数:{}", pushMessagesList.size());
+                    logger.debug("推送消息线程工作中,推送数据条数:{}", pushMessagesList.size());
                     //推送消息
-                    webSocketServer.pushMessage(pushMessagesList);
+                    for (NoticePO noticePO : pushMessagesList) {
+                        //获取当前会话
+                        Session session = webSocketServer.sessionPools.get(noticePO.getReceiverId());
+                        if (null != session && null != noticePO) {
+                            //获取消息体
+                            try {
+                                session.getBasicRemote().sendText(JSON.toJSONString(noticePO));
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }
+
                 }
-                logger.debug("推送消息线程工作工作中,推送数据条数:{}", 0);
+                logger.debug("推送消息线程工作中,推送数据条数:{}", 0);
             }
         }, 0,1 , TimeUnit.SECONDS);
     }

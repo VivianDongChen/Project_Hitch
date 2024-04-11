@@ -7,9 +7,7 @@ import com.heima.commons.domin.vo.response.ResponseVO;
 import com.heima.commons.entity.SessionContext;
 import com.heima.commons.enums.BusinessErrors;
 import com.heima.commons.helper.RedisSessionHelper;
-import com.heima.commons.utils.LocalCollectionUtils;
 import com.heima.commons.utils.SpringUtil;
-import com.heima.modules.po.NoticePO;
 import com.heima.modules.vo.NoticeVO;
 import com.heima.notice.handler.NoticeHandler;
 import org.apache.commons.lang3.StringUtils;
@@ -23,13 +21,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+//TODO:任务5.1-完成websocket开发-2
 @Component
 @ServerEndpoint(value = "/ws/socket")
 public class WebSocketServer {
 
 
     //concurrent包的线程安全Map，用来存放每个客户端对应的WebSocketServer对象。
-    private static Map<String, Session> sessionPools = new ConcurrentHashMap<>();
+    public final static Map<String, Session> sessionPools = new ConcurrentHashMap<>();
 
     /**
      * 获取所有在线用户列表
@@ -44,7 +43,7 @@ public class WebSocketServer {
 
     @OnMessage
     public void onMessage(Session session, String message) {
-        String accountId = validToken(session);
+        String accountId = getAccountId(session);
         if (StringUtils.isEmpty(accountId)) {
             return;
         }
@@ -55,7 +54,11 @@ public class WebSocketServer {
             boolean sendOK = noticeHandler.saveNotice(noticeVO);
             if (!sendOK) {
                 ResponseVO responseVO = ResponseVO.error(BusinessErrors.WS_SEND_FAILED);
-                sendMessage(session, JSON.toJSONString(responseVO));
+                try {
+                    session.getBasicRemote().sendText(JSON.toJSONString(responseVO));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -69,7 +72,7 @@ public class WebSocketServer {
      */
     @OnOpen
     public void onOpen(Session session) {
-        String accountId = validToken(session);
+        String accountId = getAccountId(session);
         if (StringUtils.isEmpty(accountId)) {
             return;
         }
@@ -84,7 +87,7 @@ public class WebSocketServer {
      */
     @OnClose
     public void onClose(Session session) {
-        String accountId = validToken(session);
+        String accountId = getAccountId(session);
         if (StringUtils.isEmpty(accountId)) {
             return;
         }
@@ -104,50 +107,18 @@ public class WebSocketServer {
         throwable.printStackTrace();
     }
 
-    /**
-     * 给指定用户发送消息
-     *
-     * @param noticePO 需要推送的消息
-     * @throws IOException
-     */
-    public void pushMessage(NoticePO noticePO) {
-        //获取当前会话
-        Session session = sessionPools.get(noticePO.getReceiverId());
-        if (null != session && null != noticePO) {
-            //获取消息体
-            sendMessage(session, JSON.toJSONString(noticePO));
-        }
-    }
 
-    /**
-     * 发送消息
-     *
-     * @param session
-     * @param message
-     */
-    private void sendMessage(Session session, String message) {
-        try {
-            session.getBasicRemote().sendText(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
-    /**
-     * 批量发送消息
-     *
-     * @param messageBOList
-     */
-    public void pushMessage(List<NoticePO> messageBOList) {
-        if (null != messageBOList && !messageBOList.isEmpty()) {
-            for (NoticePO noticePO : messageBOList) {
-                pushMessage(noticePO);
-            }
+    /*
+    * 在当前session中获取用户accoutId
+    * */
+    private String getAccountId(Session session) {
+        String token = null;
+        Map<String, List<String>> paramMap = session.getRequestParameterMap();
+        List<String> paramList = paramMap.get(HtichConstants.SESSION_TOKEN_KEY);
+        if (paramList!=null && paramList.size() != 0){
+            token = paramList.get(0);
         }
-    }
-
-    private String validToken(Session session) {
-        String token = getSessionToken(session);
         RedisSessionHelper redisSessionHelper = SpringUtil.getBean(RedisSessionHelper.class);
         if (null == redisSessionHelper) {
             return null;
@@ -160,9 +131,4 @@ public class WebSocketServer {
         return null;
     }
 
-    private String getSessionToken(Session session) {
-        Map<String, List<String>> paramMap = session.getRequestParameterMap();
-        List<String> paramList = paramMap.get(HtichConstants.SESSION_TOKEN_KEY);
-        return LocalCollectionUtils.getOne(paramList);
-    }
 }
