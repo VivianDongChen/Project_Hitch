@@ -21,13 +21,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-//TODO:任务5.1-完成websocket开发-2
+//TODO:任务5.1-完成websocket开发-2day
 @Component
 @ServerEndpoint(value = "/ws/socket")
 public class WebSocketServer {
 
 
     //concurrent包的线程安全Map，用来存放每个客户端对应的WebSocketServer对象。
+    //key是accountId，可以通过方法getAccountId获取，value是session
     public final static Map<String, Session> sessionPools = new ConcurrentHashMap<>();
 
     /*
@@ -36,23 +37,12 @@ public class WebSocketServer {
     @OnMessage
     public void onMessage(Session session, String message) {
         String accountId = getAccountId(session);
-        if (StringUtils.isEmpty(accountId)) {
-            return;
-        }
-        NoticeVO noticeVO = JSON.parseObject(message, NoticeVO.class);
-        noticeVO.setSenderId(accountId);
-        NoticeHandler noticeHandler = SpringUtil.getBean(NoticeHandler.class);
-        if (null != noticeHandler) {
-            boolean sendOK = noticeHandler.saveNotice(noticeVO);
-            if (!sendOK) {
-                ResponseVO responseVO = ResponseVO.error(BusinessErrors.WS_SEND_FAILED);
-                try {
-                    session.getBasicRemote().sendText(JSON.toJSONString(responseVO));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+
+
+        //调用save将消息存入mongodb：noticeHandler.saveNotice(noticeVO);
+        // 参数message的json格式可以从前台浏览器debug获取到，包含以下属性：receiverId,tripId,message
+
+
     }
 
 
@@ -64,12 +54,7 @@ public class WebSocketServer {
      */
     @OnOpen
     public void onOpen(Session session) {
-        String accountId = getAccountId(session);
-        if (StringUtils.isEmpty(accountId)) {
-            return;
-        }
-        sessionPools.remove(accountId);
-        sessionPools.put(accountId, session);
+
     }
 
     /**
@@ -79,11 +64,7 @@ public class WebSocketServer {
      */
     @OnClose
     public void onClose(Session session) {
-        String accountId = getAccountId(session);
-        if (StringUtils.isEmpty(accountId)) {
-            return;
-        }
-        sessionPools.remove(accountId);
+
     }
 
 
