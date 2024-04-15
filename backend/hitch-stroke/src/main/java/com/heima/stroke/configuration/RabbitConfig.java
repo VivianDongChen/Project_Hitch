@@ -45,14 +45,16 @@ public class RabbitConfig {
      */
     @Bean
     public Queue strokeOverQueue() {
-        Map<String, Object> args = new HashMap<>(3);
+        //【重要配置】超时队列配置，死信队列的绑定在该方法中实现
+        //需要用到以下属性：
+
         // x-dead-letter-exchange    这里声明当前队列绑定的死信交换机
-        args.put("x-dead-letter-exchange", STROKE_DEAD_QUEUE_EXCHANGE);
+
         // x-dead-letter-routing-key  这里声明当前队列的死信路由key
-        args.put("x-dead-letter-routing-key", STROKE_DEAD_KEY);
+
         // x-message-ttl  声明队列的TTL
-        args.put("x-message-ttl", DELAY_TIME);
-        return QueueBuilder.durable(STROKE_OVER_QUEUE).withArguments(args).build();
+
+        return null;
     }
 
 
@@ -63,7 +65,7 @@ public class RabbitConfig {
      */
     @Bean
     public Queue strokeDeadQueue() {
-        return new Queue(STROKE_DEAD_QUEUE, true);
+        return null;
     }
 
     /**
@@ -73,7 +75,7 @@ public class RabbitConfig {
      */
     @Bean
     DirectExchange strokeOverQueueExchange() {
-        return new DirectExchange(STROKE_OVER_QUEUE_EXCHANGE, true, false);
+        return null;
     }
 
     /**
@@ -83,7 +85,7 @@ public class RabbitConfig {
      */
     @Bean
     DirectExchange strokeDeadQueueExchange() {
-        return new DirectExchange(STROKE_DEAD_QUEUE_EXCHANGE, true, false);
+        return null;
     }
 
 
@@ -95,9 +97,7 @@ public class RabbitConfig {
      */
     @Bean
     Binding bindingStrokeOverDirect() {
-        return BindingBuilder.bind(strokeOverQueue()).
-                to(strokeOverQueueExchange()).
-                with(STROKE_OVER_KEY);
+        return null;
     }
 
     /**
@@ -107,31 +107,9 @@ public class RabbitConfig {
      */
     @Bean
     Binding bindingStrokeDeadDirect() {
-        return BindingBuilder.bind(strokeDeadQueue()).
-                to(strokeDeadQueueExchange()).
-                with(STROKE_DEAD_KEY);
+        return null;
     }
 
 
 
-//    @Bean(name = RabbitListenerConfigUtils.RABBIT_LISTENER_ENDPOINT_REGISTRY_BEAN_NAME)
-//    public RabbitListenerEndpointRegistry defaultRabbitListenerEndpointRegistry() {
-//        return new RabbitListenerEndpointRegistry();
-//    }
-
-    /**
-     * 设置批量消费
-     * @param connectionFactory
-     * @return
-     */
-//    @Bean("batchQueueRabbitListenerContainerFactory")
-//    public SimpleRabbitListenerContainerFactory batchQueueRabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
-//        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
-//        factory.setConnectionFactory(connectionFactory);
-//        //设置批量
-//        factory.setBatchListener(true);
-//        factory.setConsumerBatchEnabled(true);//设置BatchMessageListener生效
-//        factory.setBatchSize(10);//设置监听器一次批量处理的消息数量
-//        return factory;
-//    }
 }
