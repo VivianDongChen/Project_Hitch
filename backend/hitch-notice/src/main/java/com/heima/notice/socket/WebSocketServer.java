@@ -26,9 +26,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @ServerEndpoint(value = "/ws/socket")
 public class WebSocketServer {
 
-
+    //Websocket用户链接池
     //concurrent包的线程安全Map，用来存放每个客户端对应的WebSocketServer对象。
-    //key是accountId，可以通过方法getAccountId获取，value是session
+    //key是accountId，可以通过本类中的getAccountId方法获取到，value是session
     public final static Map<String, Session> sessionPools = new ConcurrentHashMap<>();
 
     /*
@@ -39,7 +39,7 @@ public class WebSocketServer {
         String accountId = getAccountId(session);
 
 
-        //调用save将消息存入mongodb：noticeHandler.saveNotice(noticeVO);
+        //设置相关消息内容并存入mongodb：noticeHandler.saveNotice(noticeVO);
 
 
     }

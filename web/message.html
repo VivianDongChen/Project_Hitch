@@ -55,9 +55,9 @@
                 function (d) {
                     d.data.forEach(e => {
                         if (e.senderId == current_user.id) {
-                            $('#history').append('<p class="msg1">[你]: ' + e.message + '</p>');
+                            $('#history').append('<p class="msg1">' + e.message + '</p>');
                         } else {
-                            $('#history').append('<p class="msg2">[' + e.senderUseralias + "]: " + e.message + '</p>');
+                            $('#history').append('<p class="msg2">' + e.message + '</p>');
                         }
                     });
                     msg_end.scrollIntoView();

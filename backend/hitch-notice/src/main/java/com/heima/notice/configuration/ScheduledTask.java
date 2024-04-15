@@ -38,9 +38,9 @@ public class ScheduledTask {
         //TODO:任务5.2-推送未读消息
         //定时调度，获取mongodb里的未读消息，推送给对应用户
         executorService.scheduleAtFixedRate(() -> {
-            //获取所有在线的用户accountId
+            //获取所有在线的用户accountId，提示：WebSocketServer里有用户链接的池子
 
-            //在MongoDB中获取需要推送的消息，noticeService可以帮到你
+            //在MongoDB中获取需要推送的消息，noticeService里的方法研究一下，可以帮到你
 
             //遍历所有消息，逐个发送消息到浏览器
             //方法：session.getBasicRemote().sendText(json);
