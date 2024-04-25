@@ -1,22 +1,15 @@
 package com.heima.notice.socket;
 
 
-import com.alibaba.fastjson.JSON;
 import com.heima.commons.constant.HtichConstants;
-import com.heima.commons.domin.vo.response.ResponseVO;
 import com.heima.commons.entity.SessionContext;
-import com.heima.commons.enums.BusinessErrors;
 import com.heima.commons.helper.RedisSessionHelper;
 import com.heima.commons.utils.SpringUtil;
-import com.heima.modules.vo.NoticeVO;
 import com.heima.notice.handler.NoticeHandler;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,7 +31,7 @@ public class WebSocketServer {
     public void onMessage(Session session, String message) {
         String accountId = getAccountId(session);
 
-
+        NoticeHandler noticeHandler = SpringUtil.getBean(NoticeHandler.class);
         //设置相关消息内容并存入mongodb：noticeHandler.saveNotice(noticeVO);
 
 
