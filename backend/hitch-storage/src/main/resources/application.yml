@@ -9,7 +9,7 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.64.100:3306/hitch?useUnicode=true&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/hitch?useUnicode=true&characterEncoding=UTF-8
     username: root
     password: root
     initialSize: 10
@@ -19,7 +19,7 @@ spring:
   #### nacos 配置#######
   cloud:
     nacos:
-      server-addr: 192.168.64.100:8848
+      server-addr: localhost:8848
 
 #  cache:
 #    type: redis
@@ -29,7 +29,7 @@ spring:
 #      use-key-prefix: true
 
   redis:
-    host: 192.168.64.100
+    host: localhost
     port: 6379
     jedis:
       pool:
@@ -40,7 +40,7 @@ spring:
     lettuce:
       shutdown-timeout: 0
   rabbitmq:
-    host: 192.168.64.100
+    host: localhost
     port: 5672
     username: guest
     password: guest
@@ -52,11 +52,11 @@ spring:
       max-request-size: 10MB
 
 #minio的完整url会写入后台的数据库
-#例如：http://192.168.64.100:9005/prize/1701754725603.jpeg
+#例如：http://localhost:9005/prize/1701754725603.jpeg
 #所以要保障其可访问性，尤其是docker部署的时候，应该是宿主机暴露的端口！
 minio:
-  url: http://192.168.64.100:9005
-  host: 192.168.64.100
+  url: http://localhost:9005
+  host: localhost
   port: 9005
   bucket: hitch
   username: minioadmin

@@ -1,6 +1,6 @@
 spring:
   rabbitmq:
-    host: 192.168.64.100
+    host: localhost
     port: 5672
     username: guest
     password: guest
@@ -10,7 +10,7 @@ spring:
       simple:
         acknowledge-mode: manual
 #  kafka:
-#    bootstrap-servers: 192.168.64.100:9103
+#    bootstrap-servers: localhost:9103
 #    producer: # producer 生产者
 #      retries: 0 # 重试次数
 #      acks: 1 # 应答级别:多少个分区副本备份完成时向生产者发送ack确认(可选0、1、all/-1)
@@ -33,7 +33,7 @@ spring:
 #      #      value-deserializer: com.itheima.demo.config.MyDeserializer
 #      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
   redis:
-    host: 192.168.64.100
+    host: localhost
     port: 6379
     timeout: 1000
     jedis:
@@ -44,7 +44,7 @@ spring:
         min-idle: 0
   data:
     mongodb:
-      host: 192.168.64.100
+      host: localhost
       port: 27017
       database: location
 baidu:
